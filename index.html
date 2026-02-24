@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paneer AR Experience</title>
+
+  <!-- model-viewer -->
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: white;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .overlay h1 {
+      margin: 10px 0 5px;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
+
+    .overlay p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .info-card {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85%;
+      max-width: 400px;
+      padding: 16px;
+      border-radius: 16px;
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    model-viewer {
+      width: 100%;
+      height: 100vh;
+      background: transparent;
+      --ar-button-color: #000;
+      --ar-button-background-color: #fff;
+    }
+
+    button[slot="ar-button"] {
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 14px 24px;
+      font-size: 16px;
+      border: none;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="overlay">
+    <h1>Paneer Special</h1>
+    <p>Open in Google Chrome for best AR experience</p>
+  </div>
+
+  <div class="info-card">
+    Point your camera at a flat surface and tap "View in AR"
+  </div>
+
+  <div id="loadingText" class="loading">
+    Loading 3D Model...
+  </div>
+
+  <model-viewer
+    id="arModel"
+    src = "paneer2.glb"
+    ios-src="paneer2.usdz"
+    ar
+    ar-modes="scene-viewer webxr quick-look"
+    ar-placement="floor"
+    ar-scale="auto"
+    camera-controls
+    shadow-intensity="1"
+    exposure="1"
+    environment-image="neutral"
+    loading="eager"
+    reveal="interaction">
+
+    <button slot="ar-button">
+      View in AR
+    </button>
+
+  </model-viewer>
+
+  <script>
+const model = document.getElementById('arModel');
+const loadingText = document.getElementById('loadingText');
+
+const dishes = {
+  paneer2: {
+    glb: "paneer2.glb",
+    usdz: "paneer2.usdz",
+    title: "Paneer Special"
+  },
+  dish1: {
+    glb: "1.glb",
+    usdz: "1.usdz",
+    title: "Special Dish 2"
+  }
+};
+
+function loadDishFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const dishKey = params.get("dish");
+
+  if (dishes[dishKey]) {
+    model.src = dishes[dishKey].glb;
+    model.setAttribute("ios-src", dishes[dishKey].usdz);
+    document.querySelector(".overlay h1").innerText = dishes[dishKey].title;
+  } else {
+    // Default
+    model.src = dishes.paneer2.glb;
+    model.setAttribute("ios-src", dishes.paneer2.usdz);
+  }
+}
+
+model.addEventListener('load', () => {
+  loadingText.style.display = "none";
+});
+
+loadDishFromURL();
+</script>
+
+</body>
+</html>
