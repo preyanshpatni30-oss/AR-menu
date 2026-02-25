@@ -3,139 +3,65 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AR Experience</title>
+<title>View in AR</title>
 
 <script type="module"
 src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
 </script>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
+body {
+  margin: 0;
+  background: radial-gradient(circle at top,#111,#000);
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  color: white;
 }
 
-body{
-  height:100vh;
-  overflow:hidden;
-  background: radial-gradient(circle at top,#0f2027,#203a43,#2c5364);
-  color:white;
+.title {
+  position: absolute;
+  top: 25px;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  z-index: 10;
 }
 
-/* Background glow effect */
-body::before{
-  content:"";
-  position:absolute;
-  width:500px;
-  height:500px;
-  background: radial-gradient(circle,#ffb347,transparent 70%);
-  filter:blur(120px);
-  top:-100px;
-  right:-100px;
-  opacity:0.3;
+.subtitle {
+  position: absolute;
+  top: 55px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.6;
+  z-index: 10;
 }
 
-/* Top overlay */
-.overlay{
-  position:absolute;
-  top:0;
-  width:100%;
-  text-align:center;
-  padding:30px 20px;
-  z-index:10;
+model-viewer {
+  width: 100%;
+  height: 100vh;
+  --ar-button-color: white;
+  --ar-button-background-color: black;
 }
 
-.overlay h1{
-  font-size:36px;
-  font-weight:700;
-  letter-spacing:1px;
-  margin-bottom:5px;
+button[slot="ar-button"] {
+  border-radius: 30px;
+  padding: 14px 22px;
+  font-size: 16px;
+  font-weight: 600;
 }
-
-.overlay p{
-  font-size:14px;
-  opacity:0.7;
-}
-
-/* Info card bottom */
-.info-card{
-  position:absolute;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:18px 30px;
-  border-radius:40px;
-  backdrop-filter:blur(20px);
-  background:rgba(255,255,255,0.1);
-  box-shadow:0 10px 40px rgba(0,0,0,0.4);
-  font-size:14px;
-  z-index:10;
-}
-
-/* Model viewer */
-model-viewer{
-  width:100%;
-  height:100vh;
-  background:transparent;
-  --ar-button-background-color:transparent;
-  --ar-button-color:white;
-}
-
-/* AR Button */
-button[slot="ar-button"]{
-  background:linear-gradient(45deg,#ffb347,#ffcc33);
-  border:none;
-  border-radius:50px;
-  padding:16px 28px;
-  font-size:18px;
-  font-weight:600;
-  cursor:pointer;
-  box-shadow:0 0 20px rgba(255,204,51,0.6);
-  transition:0.3s;
-  animation: pulse 2s infinite;
-}
-
-button[slot="ar-button"]:hover{
-  transform:scale(1.1);
-}
-
-@keyframes pulse{
-  0%{box-shadow:0 0 15px rgba(255,204,51,0.6);}
-  50%{box-shadow:0 0 35px rgba(255,204,51,1);}
-  100%{box-shadow:0 0 15px rgba(255,204,51,0.6);}
-}
-
-/* Loading text */
-.loading{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:16px;
-  opacity:0.8;
-  letter-spacing:1px;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
-  <h1 id="dishTitle">Loading...</h1>
-  <p>Scan → Tap → Experience in AR</p>
+<div class="title" id="modelTitle">
+Loading...
 </div>
 
-<div id="loadingText" class="loading">
-  Preparing your dish...
-</div>
-
-<div class="info-card">
-  Point your camera at a flat surface & tap "View in AR"
+<div class="subtitle">
+Tap the AR button to place the model on your table
 </div>
 
 <model-viewer
@@ -145,62 +71,65 @@ button[slot="ar-button"]:hover{
   ar
   ar-modes="scene-viewer webxr quick-look"
   ar-placement="floor"
+  ar-scale="auto"
   camera-controls
+  auto-rotate
   shadow-intensity="1"
   exposure="1"
   environment-image="neutral"
-  loading="eager"
-  reveal="interaction">
+  loading="eager">
 
   <button slot="ar-button">
-    ✨ View in AR
+    View in AR
   </button>
 
 </model-viewer>
 
 <script>
-const model = document.getElementById('arModel');
-const loadingText = document.getElementById('loadingText');
-const title = document.getElementById('dishTitle');
+
+const model = document.getElementById("arModel");
+const title = document.getElementById("modelTitle");
 
 const dishes = {
-  paneer2:{
-    glb:"paneer2.glb",
-    usdz:"paneer2.usdz",
-    title:"Paneer "
+
+  paneer2: {
+    glb: "paneer2.glb",
+    usdz: "paneer2.usdz",
+    title: "Paneer Special"
   },
-  dish1:{
-    glb:"1.glb",
-    usdz:"1.usdz",
-    title:"bottle"
+
+  cream: {
+    glb: "cream.glb",
+    usdz: "cream.usdz",
+    title: "Creamy Delight"
   },
-  cream:{
-    glb:"cream.glb",
-    usdz:"cream.usdz",
-    title:"Creamy Delight"
-  }
+
+  charger: {
+    glb: "charger.glb",
+    usdz: "charger.usdz",
+    title: "Charger Model"
+  },
+
+  
 };
 
-function loadDishFromURL(){
-  const params=new URLSearchParams(window.location.search);
-  const dishKey=params.get("dish");
+function loadFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get("dish");
 
-  if(dishes[dishKey]){
-    model.src=dishes[dishKey].glb;
-    model.setAttribute("ios-src",dishes[dishKey].usdz);
-    title.innerText=dishes[dishKey].title;
-  }else{
-    model.src=dishes.paneer2.glb;
-    model.setAttribute("ios-src",dishes.paneer2.usdz);
-    title.innerText=dishes.paneer2.title;
+  if (dishes[key]) {
+    model.src = dishes[key].glb;
+    model.setAttribute("ios-src", dishes[key].usdz);
+    title.innerText = dishes[key].title;
+  } else {
+    model.src = dishes.paneer2.glb;
+    model.setAttribute("ios-src", dishes.paneer2.usdz);
+    title.innerText = dishes.paneer2.title;
   }
 }
 
-model.addEventListener('load',()=>{
-  loadingText.style.display="none";
-});
+loadFromURL();
 
-loadDishFromURL();
 </script>
 
 </body>
